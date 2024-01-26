@@ -6,6 +6,7 @@ namespace App\UseCase\Weather;
 
 use App\DTO\Weather\WeatherDTO;
 use App\Mail\GmailNotification;
+use App\Mail\WelcomeMail;
 use App\Repositories\Telegram\TelegramRepositoryInterface;
 use App\Repositories\Weather\WeatherDecorator;
 use Exception;
@@ -35,7 +36,7 @@ class WeatherUseCase
 
             match ($sendTo[0]) {
                 'telegram' => $this->telegramRepository->sendMessage($response, $sendTo[1]),
-                'mail' => '',
+                'mail' => Mail::to($sendTo[1])->send(new WelcomeMail('test', $response)),
                 default => throw new Exception('Wrong type to send'),
             };
         }
