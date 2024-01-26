@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+    app:
+        image: php:8.2-fpm
+        working_dir: /app
+        container_name: fmp
+        volumes:
+            - ./:/app
+            - ./docker/php/php.ini:/usr/local/etc/php/conf.d/uploads.ini
+        networks:
+            app-network:
+                aliases:
+                    - app
+
+    nginx:
+        image: nginx:1.19-alpine
+        container_name: nginx
+        volumes:
+            - ./:/app
+            - ./docker/nginx:/etc/nginx/conf.d
+        ports:
+            - "880:80"
+        environment:
+            - APP_CONTAINER_NAME=app
+        depends_on:
+            - app
+        networks:
+            - app-network
+
+networks:
+    app-network:
+        driver: bridge
